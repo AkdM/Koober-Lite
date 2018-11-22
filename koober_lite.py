@@ -73,16 +73,19 @@ def download_audio(headers, dl_path, filename, url):
   if not os.path.isfile("{}/{}".format(dl_path, filename)):
     print("\t\t • Downloading")
     audio_file_req = req.get(url, headers=headers, allow_redirects=True, stream=True)
-    audio_file_length = int(audio_file_req.headers.get('content-length'))
-    with open("{}/{}".format(dl_path, filename), 'wb') as item:
-      for chunk in tqdm.tqdm(
-        audio_file_req.iter_content(chunk_size=1024),
-        total=int(audio_file_length / 1024),
-        unit='KB',
-        desc=filename,
-        leave=True
-      ):
-        item.write(chunk)
+    if audio_file_req.headers.get('content-length'):
+      audio_file_length = int(audio_file_req.headers.get('content-length'))
+      with open("{}/{}".format(dl_path, filename), 'wb') as item:
+        for chunk in tqdm.tqdm(
+          audio_file_req.iter_content(chunk_size=1024),
+          total=int(audio_file_length / 1024),
+          unit='KB',
+          desc=filename,
+          leave=True
+        ):
+          item.write(chunk)
+    else:
+      print("\t\t\t • Unable to download it")
   else:
     print("\t\t • File already exists")
     return False
