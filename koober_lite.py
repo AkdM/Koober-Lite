@@ -33,16 +33,26 @@ def image_to_bytes(url):
 def write_tags(dl_path, filename, book_informations):
   print("\t\t • Writing tags")
   audio_file = eyed3.load("{}/{}".format(dl_path, filename))
-  if (audio_file.tag == None):
-    audio_file.initTag()
-  audio_file.tag.title = book_informations.get('title')
-  audio_file.tag.artist = book_informations.get('writer')
-  audio_file.tag.album = book_informations.get('category')
-  audio_file.tag.album_artist = "Koober".decode('utf-8')
-  if not audio_file.tag.images:
+  if audio_file is None:
+    tag = eyed3.id3.Tag()
+    tag.title = book_informations.get('title')
+    tag.artist = book_informations.get('writer')
+    tag.album = book_informations.get('category')
+    tag.album_artist = "Koober".decode('utf-8')
     image = image_to_bytes(book_informations.get('img_url'))
-    audio_file.tag.images.set(3, image, 'image/jpeg')
-  audio_file.tag.save(version=eyed3.id3.ID3_V2_3)
+    tag.images.set(3, image, 'image/jpeg')
+    tag.save(filename="{}/{}".format(dl_path, filename), version=eyed3.id3.ID3_V2_3, encoding='utf-8')
+  else:
+    if (audio_file.tag == None):
+      audio_file.initTag()
+    audio_file.tag.title = book_informations.get('title')
+    audio_file.tag.artist = book_informations.get('writer')
+    audio_file.tag.album = book_informations.get('category')
+    audio_file.tag.album_artist = "Koober".decode('utf-8')
+    if not audio_file.tag.images:
+      image = image_to_bytes(book_informations.get('img_url'))
+      audio_file.tag.images.set(3, image, 'image/jpeg')
+    audio_file.tag.save(version=eyed3.id3.ID3_V2_3, encoding='utf-8')
 
 def download_all(dl_path):
   categories_url = "https://koober.com/fr/api/koobs/categories/tous?orderby=&page="
