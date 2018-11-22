@@ -1,5 +1,6 @@
 ebooks/*
 !ebooks/.gitkeep
 env
+env2
 .vscode
 .DS_Store
