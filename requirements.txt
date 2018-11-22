@@ -1,0 +1,4 @@
+requests
+argparse
+eyed3
+tqdm
