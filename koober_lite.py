@@ -66,8 +66,8 @@ def download_all(dl_path):
           filename = os.path.basename(url)
           book_informations = item['book']
           print("\t • \"{}\" by \"{}\"".format(book_informations.get('title').encode('utf-8'), book_informations.get('writer').encode('utf-8')))
-          download_audio(headers, dl_path, filename, url)
-          write_tags(dl_path, filename, book_informations)
+          if download_audio(headers, dl_path, filename, url):
+            write_tags(dl_path, filename, book_informations)
 
 def download_audio(headers, dl_path, filename, url):
   if not os.path.isfile("{}/{}".format(dl_path, filename)):
@@ -84,11 +84,13 @@ def download_audio(headers, dl_path, filename, url):
           leave=True
         ):
           item.write(chunk)
+      return True
     else:
       print("\t\t\t • Unable to download it")
+      return False
   else:
     print("\t\t • File already exists")
-    return False
+    return True
 
 def main(argv):
   args = arguments()
